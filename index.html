@@ -94,12 +94,14 @@
         .action-link.active-ready { color: var(--error-color); }
 
         /* 2. 查询页面样式 */
+        .search-container { position: sticky; top: 0; background: rgba(255,255,255,0.95); padding-bottom: 10px; z-index: 5; }
         .search-box {
             width: 100%; padding: 12px; border: 2px solid #e4e7ed; border-radius: 12px;
-            font-size: 15px; box-sizing: border-box; outline: none; transition: all 0.3s; margin-bottom: 15px;
+            font-size: 15px; box-sizing: border-box; outline: none; transition: all 0.3s;
         }
         .search-box:focus { border-color: #4facfe; }
-        .dict-list { display: flex; flex-direction: column; gap: 10px; }
+        .search-count { font-size: 12px; color: var(--text-muted); margin: 8px 0; font-weight: 600; }
+        .dict-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
         .dict-item {
             background: white; padding: 12px 16px; border-radius: 12px;
             display: flex; justify-content: space-between; align-items: center;
@@ -145,7 +147,6 @@
 <body>
 
 <div class="container">
-    <!-- 状态栏 -->
     <div class="status-bar">
         <span id="modeLabel" class="mode-badge">常规挑战</span>
         <div style="font-weight: 600;">
@@ -155,7 +156,6 @@
     </div>
     <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
 
-    <!-- 页面一：核心刷题 -->
     <div id="pageQuiz" class="content-page active">
         <div class="quiz-area">
             <div id="quizType" class="quiz-type">加载中...</div>
@@ -173,15 +173,15 @@
         </div>
     </div>
 
-    <!-- 页面二：答案查询 -->
     <div id="pageSearch" class="content-page">
-        <input type="text" id="searchInp" class="search-box" placeholder="🔍 输入符号或中文名查询（如：H 或 氢）" oninput="doSearch()">
-        <div class="dict-list" id="dictList">
-            <!-- 查询结果动态渲染 -->
+        <div class="search-container">
+            <input type="text" id="searchInp" class="search-box" placeholder="🔍 输入符号或中文名查询（如：H 或 氢）" oninput="doSearch()">
+            <div class="search-count" id="searchCount">正在统计数据...</div>
         </div>
+        <div class="dict-list" id="dictList">
+            </div>
     </div>
 
-    <!-- 页面三：打卡成就 -->
     <div id="pageRank" class="content-page">
         <div class="punch-card">
             <div>已连续坚持打卡</div>
@@ -190,11 +190,9 @@
         </div>
         <div class="grid-title">🗓️ 近期打卡里程碑</div>
         <div class="punch-grid" id="punchGrid">
-            <!-- 28天打卡格子 -->
-        </div>
+            </div>
     </div>
 
-    <!-- 底部导航栏 -->
     <div class="bottom-nav">
         <div class="nav-item active" id="btnNavQuiz" onclick="switchTab('quiz')">
             <div class="nav-icon">🎯</div><div>开始刷题</div>
@@ -521,7 +519,7 @@ function toggleMode() {
 
 // ==================== 4. 仿 App 选项卡切换 ====================
 function switchTab(tabName) {
-    tryInitAudio(); // 每次切签点击时激活音效
+    tryInitAudio();
     document.querySelectorAll('.content-page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
@@ -531,7 +529,7 @@ function switchTab(tabName) {
     } else if (tabName === 'search') {
         document.getElementById('pageSearch').classList.add('active');
         document.getElementById('btnNavSearch').classList.add('active');
-        doSearch(); // 自动跑一次空搜索，展示全部数据
+        doSearch();
     } else if (tabName === 'rank') {
         document.getElementById('pageRank').classList.add('active');
         document.getElementById('btnNavRank').classList.add('active');
@@ -539,31 +537,31 @@ function switchTab(tabName) {
     }
 }
 
-// ==================== 5. 题库字典查询系统 ====================
+// ==================== 5. 题库字典查询系统（解除40条限制，完美满载） ====================
 function doSearch() {
     const kw = document.getElementById('searchInp').value.toLowerCase().trim();
     const listContainer = document.getElementById('dictList');
     listContainer.innerHTML = '';
 
-    // 使用 Map 去重，让查询列表极度纯净
-    const uniqueMap = new Map();
-    globalDb.forEach(item => {
-        const key = `${item.type}_${item.question}_${item.answer}`;
-        if (!uniqueMap.has(key)) uniqueMap.set(key, item);
-    });
-
     let count = 0;
-    uniqueMap.forEach(item => {
+    // 直接循环展示完整的全量原始题库数据
+    globalDb.forEach(item => {
         if (kw === "" || item.question.toLowerCase().includes(kw) || item.answer.toLowerCase().includes(kw)) {
-            if (count < 40) { // 限制最多展示前 40 条，防止卡顿
-                const div = document.createElement('div');
-                div.className = 'dict-item';
-                div.innerHTML = `<span class="dict-q"><span style="font-size:12px;color:#747d8c;font-weight:400;">${item.type}</span> ${item.question}</span> <span class="dict-a">正解: ${item.answer}</span>`;
-                listContainer.appendChild(div);
-                count++;
-            }
+            const div = document.createElement('div');
+            div.className = 'dict-item';
+            div.innerHTML = `<span class="dict-q"><span style="font-size:11px;color:#747d8c;font-weight:400;background:#eee;padding:2px 6px;border-radius:4px;margin-right:6px;">#${item.id}</span><span style="font-size:12px;color:#747d8c;font-weight:400;">${item.type}</span> <strong>${item.question}</strong></span> <span class="dict-a">正解: ${item.answer}</span>`;
+            listContainer.appendChild(div);
+            count++;
         }
     });
+
+    // 动态显示当前搜出来/展示的总数
+    if (kw === "") {
+        document.getElementById('searchCount').innerText = `📊 全量题库共收录：${count} 道题（已全部加载完毕）`;
+    } else {
+        document.getElementById('searchCount').innerText = `🔍 帮您找到了：${count} 条匹配的题目`;
+    }
+
     if(count === 0) {
         listContainer.innerHTML = '<div style="text-align:center;color:#a4b0be;margin-top:20px;font-size:14px;">没有搜到匹配的元素记录数据哦~</div>';
     }
@@ -590,13 +588,11 @@ function renderPunchGrid() {
     const grid = document.getElementById('punchGrid');
     grid.innerHTML = '';
 
-    // 生成固定 28 个格子表示周期循环进度
     for (let i = 1; i <= 28; i++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'grid-day';
         dayDiv.innerText = `${i}天`;
 
-        // 循环点亮打卡格
         if (i <= streak) {
             dayDiv.classList.add('active');
             dayDiv.innerText = '⭐';
@@ -613,16 +609,15 @@ function executePunch() {
 
     if (lastDate === today) return;
 
-    // 检查是否为连续打卡（昨天）
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yestStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
 
     if (lastDate === yestStr || streak === 0) {
         streak += 1;
-        if(streak > 28) streak = 1; // 满 28 天自动新一轮周期循环
+        if(streak > 28) streak = 1;
     } else {
-        streak = 1; // 断签重置
+        streak = 1;
     }
 
     localStorage.setItem('chem_punch_streak', streak);
@@ -636,7 +631,6 @@ function executePunch() {
 window.onload = () => {
     initData();
     restartChallenge();
-    // 全局任意位置初次点击时静默激活音频引擎
     document.body.addEventListener('click', () => { tryInitAudio(); }, { once: false });
 };
 </script>

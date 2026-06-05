@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>化学元素百词斩 Pro</title>
+    <title>化学元素百词斩 Ultra</title>
     <style>
         :root {
             --primary-grad: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --success-color: #00b894;
             --error-color: #ff7675;
-            --bg-grad: linear-gradient(120deg, #f1f2f6 0%, #dfe4ea 100%);
-            --card-shadow: 0 12px 32px rgba(31, 38, 135, 0.08);
+            --bg-grad: linear-gradient(120deg, #e0e5ec 0%, #f1f2f6 100%);
+            --card-shadow: 0 12px 32px rgba(31, 38, 135, 0.06);
             --text-main: #2f3542;
             --text-muted: #747d8c;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-grad);
             margin: 0;
-            padding: 16px;
+            padding: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,20 +30,22 @@
         .container {
             width: 100%;
             max-width: 440px;
+            height: 640px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(8px);
-            border-radius: 24px;
+            border-radius: 28px;
             box-shadow: var(--card-shadow);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
         }
 
-        /* 状态栏升级 */
+        /* 顶部导航状态栏 */
         .status-bar {
             background-color: rgba(241, 242, 246, 0.7);
-            padding: 16px 20px;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -54,186 +56,160 @@
         .mode-badge {
             font-weight: 600;
             color: #0984e3;
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
             background: rgba(9, 132, 227, 0.1);
-            transition: all 0.3s ease;
         }
-
         .mode-badge.wrong-mode {
             color: #d63031;
             background: rgba(214, 48, 49, 0.1);
         }
 
-        .stats-group {
-            display: flex;
-            gap: 12px;
-            color: var(--text-main);
-            font-weight: 500;
-        }
+        .progress-container { width: 100%; height: 4px; background: #eee; }
+        .progress-bar { width: 0%; height: 100%; background: var(--primary-grad); transition: width 0.3s; }
 
-        .wrong-count {
-            color: #d63031;
-            font-weight: bold;
-        }
-
-        /* 顶置进度条 */
-        .progress-container {
-            width: 100%;
-            height: 4px;
-            background: #eee;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: var(--primary-grad);
-            transition: width 0.3s ease;
-        }
-
-        /* 题目区域 */
-        .quiz-area {
-            padding: 45px 24px 35px 24px;
-            text-align: center;
-        }
-
-        .quiz-type {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .quiz-question {
-            font-size: 52px;
-            font-weight: 800;
-            color: var(--text-main);
-            margin: 0;
-            min-height: 75px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        /* 选项区域 */
-        .options-area {
-            padding: 0 24px 24px 24px;
-        }
-
-        .option-btn {
-            width: 100%;
-            padding: 18px 20px;
-            margin-bottom: 14px;
-            border: 2px solid #f1f2f6;
-            border-radius: 16px;
-            background-color: #ffffff;
-            font-size: 17px;
-            color: var(--text-main);
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-            outline: none;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
-        }
-
-        .option-btn:hover {
-            border-color: #747d8c;
-            background-color: #fafafa;
-            transform: translateY(-1px);
-        }
-
-        .option-btn:active {
-            transform: translateY(1px);
-        }
-
-        /* 动态反馈样式 */
-        .option-btn.correct {
-            background-color: #e8f8f5 !important;
-            border-color: var(--success-color) !important;
-            color: var(--success-color) !important;
-            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.15);
-        }
-
-        .option-btn.incorrect {
-            background-color: #ffeaa7 !important;
-            border-color: var(--error-color) !important;
-            color: #d63031 !important;
-            box-shadow: 0 4px 12px rgba(255, 118, 117, 0.15);
-        }
-
-        /* 底部操作区 */
-        .footer {
+        /* 页面主体内容区 */
+        .content-page {
+            flex-grow: 1;
+            overflow-y: auto;
             padding: 20px;
-            text-align: center;
-            background: rgba(241, 242, 246, 0.4);
-            border-top: 1px solid rgba(0, 0, 0, 0.03);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
+            display: none;
         }
+        .content-page.active { display: block; }
 
-        .switch-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: all 0.2s;
+        /* 1. 刷题页面样式 */
+        .quiz-area { padding: 30px 10px 20px 10px; text-align: center; }
+        .quiz-type { font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 10px; }
+        .quiz-question { font-size: 46px; font-weight: 800; color: var(--text-main); margin: 0; min-height: 65px; }
+        .option-btn {
+            width: 100%; padding: 15px 20px; margin-bottom: 12px; border: 2px solid #f1f2f6;
+            border-radius: 16px; background: white; font-size: 16px; color: var(--text-main);
+            cursor: pointer; transition: all 0.2s; font-weight: 600; text-align: center; outline: none;
         }
+        .option-btn.correct { background-color: #e8f8f5 !important; border-color: var(--success-color) !important; color: var(--success-color) !important; }
+        .option-btn.incorrect { background-color: #ffeaa7 !important; border-color: var(--error-color) !important; color: #d63031 !important; }
 
-        .switch-btn:hover:not(:disabled) {
-            background: rgba(0,0,0,0.05);
-            color: var(--text-main);
-        }
+        .quiz-footer { display: flex; justify-content: space-around; padding-top: 10px; }
+        .action-link { background: none; border: none; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline; }
+        .action-link.active-ready { color: var(--error-color); }
 
-        .switch-btn:disabled {
-            color: #ced6e0;
-            cursor: not-allowed;
+        /* 2. 查询页面样式 */
+        .search-box {
+            width: 100%; padding: 12px; border: 2px solid #e4e7ed; border-radius: 12px;
+            font-size: 15px; box-sizing: border-box; outline: none; transition: all 0.3s; margin-bottom: 15px;
         }
+        .search-box:focus { border-color: #4facfe; }
+        .dict-list { display: flex; flex-direction: column; gap: 10px; }
+        .dict-item {
+            background: white; padding: 12px 16px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid #f1f2f6;
+        }
+        .dict-q { font-weight: 700; color: var(--text-main); font-size: 16px; }
+        .dict-a { font-weight: 600; color: var(--success-color); background: rgba(0, 184, 148, 0.1); padding: 2px 8px; border-radius: 6px; font-size: 14px; }
 
-        .switch-btn.active-ready {
-            color: #ff7675;
+        /* 3. 打卡页面样式 */
+        .punch-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            border-radius: 20px; padding: 24px; color: white; text-align: center; margin-bottom: 25px;
         }
+        .punch-days { font-size: 42px; font-weight: 800; margin: 10px 0; }
+        .punch-btn {
+            background: white; color: #0984e3; border: none; padding: 12px 30px;
+            border-radius: 25px; font-size: 16px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.2s;
+        }
+        .punch-btn:disabled { background: #ced6e0; color: #a4b0be; cursor: not-allowed; box-shadow: none; }
+
+        .grid-title { font-size: 14px; color: var(--text-main); font-weight: 700; margin-bottom: 10px; }
+        .punch-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .grid-day {
+            aspect-ratio: 1; background: white; border-radius: 8px; border: 1px solid #e4e7ed;
+            display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-muted);
+        }
+        .grid-day.active { background: var(--success-color); color: white; border-color: var(--success-color); }
+
+        /* 底部仿 App 导航栏 */
+        .bottom-nav {
+            height: 65px; background: white; border-top: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex; justify-content: space-around; align-items: center;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); cursor: pointer; font-size: 12px; font-weight: 600; flex-grow: 1; height: 100%;
+        }
+        .nav-item.active { color: #0984e3; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- 状态栏 -->
     <div class="status-bar">
         <span id="modeLabel" class="mode-badge">常规挑战</span>
-        <div class="stats-group">
+        <div style="font-weight: 600;">
             <span id="remainLabel">进度: 0/20</span>
-            <span>错题: <span id="wrongLabel" class="wrong-count">0</span></span>
+            <span style="margin-left: 10px;">错题: <span id="wrongLabel" style="color: #d63031;">0</span></span>
+        </div>
+    </div>
+    <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
+
+    <!-- 页面一：核心刷题 -->
+    <div id="pageQuiz" class="content-page active">
+        <div class="quiz-area">
+            <div id="quizType" class="quiz-type">加载中...</div>
+            <h1 id="quizQuestion" class="quiz-question">--</h1>
+        </div>
+        <div class="options-area" id="optionsArea">
+            <button class="option-btn" onclick="checkAnswer(0)">A</button>
+            <button class="option-btn" onclick="checkAnswer(1)">B</button>
+            <button class="option-btn" onclick="checkAnswer(2)">C</button>
+            <button class="option-btn" onclick="checkAnswer(3)">D</button>
+        </div>
+        <div class="quiz-footer">
+            <button id="switchBtn" class="action-link" onclick="toggleMode()" disabled>错题强化</button>
+            <button class="action-link" onclick="restartChallenge()">换一批(20题)</button>
         </div>
     </div>
 
-    <div class="progress-container">
-        <div id="progressBar" class="progress-bar"></div>
+    <!-- 页面二：答案查询 -->
+    <div id="pageSearch" class="content-page">
+        <input type="text" id="searchInp" class="search-box" placeholder="🔍 输入符号或中文名查询（如：H 或 氢）" oninput="doSearch()">
+        <div class="dict-list" id="dictList">
+            <!-- 查询结果动态渲染 -->
+        </div>
     </div>
 
-    <div class="quiz-area">
-        <div id="quizType" class="quiz-type">加载中</div>
-        <h1 id="quizQuestion" class="quiz-question">--</h1>
+    <!-- 页面三：打卡成就 -->
+    <div id="pageRank" class="content-page">
+        <div class="punch-card">
+            <div>已连续坚持打卡</div>
+            <div class="punch-days" id="streakText">0 天</div>
+            <button id="punchBtn" class="punch-btn" onclick="executePunch()">今日打卡</button>
+        </div>
+        <div class="grid-title">🗓️ 近期打卡里程碑</div>
+        <div class="punch-grid" id="punchGrid">
+            <!-- 28天打卡格子 -->
+        </div>
     </div>
 
-    <div class="options-area" id="optionsArea">
-        <button class="option-btn" onclick="checkAnswer(0)">A</button>
-        <button class="option-btn" onclick="checkAnswer(1)">B</button>
-        <button class="option-btn" onclick="checkAnswer(2)">C</button>
-        <button class="option-btn" onclick="checkAnswer(3)">D</button>
-    </div>
-
-    <div class="footer">
-        <button id="switchBtn" class="switch-btn" onclick="toggleMode()" disabled>错题强化</button>
-        <button id="resetBtn" class="switch-btn" onclick="restartChallenge()">换一批(20题)</button>
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <div class="nav-item active" id="btnNavQuiz" onclick="switchTab('quiz')">
+            <div class="nav-icon">🎯</div><div>开始刷题</div>
+        </div>
+        <div class="nav-item" id="btnNavSearch" onclick="switchTab('search')">
+            <div class="nav-icon">🔍</div><div>题库查询</div>
+        </div>
+        <div class="nav-item" id="btnNavRank" onclick="switchTab('rank')">
+            <div class="nav-icon">📅</div><div>打卡成就</div>
+        </div>
     </div>
 </div>
 
 <script>
-// ==================== 1. 完整题库 ====================
+// ==================== 1. 纯净清洗题库 ====================
 const rawData = `
 1	符号→中文名	H	氢	氦	氮	氧
 2	符号→中文名	He	氦	氢	锂	氖
@@ -367,92 +343,79 @@ const rawData = `
 130	名称→符号	氯	Cl	CL	cl	Al
 `;
 
-// ==================== 2. 数据控制与状态 ====================
-let globalDb = [];       // 130题大金库
-let challengePool = [];  // 当前挑战的20题池
-let wrongPool = [];      // 永久错题本
-let currentPool = [];    // 当前正在刷的库（指向挑战池或错题本）
-
-let currentMode = "常规挑战"; // "常规挑战" 或 "错题模式"
+// ==================== 2. 全局状态控制 ====================
+let globalDb = [];
+let challengePool = [];
+let wrongPool = [];
+let currentPool = [];
+let currentMode = "常规挑战";
 let currentQuestion = null;
 let currentShuffledOptions = [];
 let isLocking = false;
-let totalInRound = 20;   // 本轮初始题数
+let totalInRound = 20;
 
-// 音频上下文初始化
 let audioCtx = null;
-function initAudio() {
+
+function tryInitAudio() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
 }
 
-// 播放原生合成音效（免除外部文件依赖）
 function playSound(type) {
     try {
-        initAudio();
+        tryInitAudio();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain);
         gain.connect(audioCtx.destination);
 
         if (type === 'correct') {
-            // 清脆的“叮”声：高频短促双音调切换
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08); // A5
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         } else {
-            // 沉闷的“咚”声：低频锯齿下降音调
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(90, audioCtx.currentTime + 0.25);
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(170, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.25);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         }
-    } catch(e) {
-        console.log("音频播放受浏览器策略限制，需交互触发");
-    }
+    } catch(e){}
 }
 
-// 乱序辅助
-function shuffleArray(arr) {
-    return arr.sort(() => Math.random() - 0.5);
-}
+function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 
-// 初始化数据库
+// ==================== 3. 核心初始化 ====================
 function initData() {
     const lines = rawData.trim().split('\n');
     lines.forEach(line => {
         const parts = line.split('\t');
         if (parts.length === 7) {
             globalDb.push({
-                id: parts[0].trim(),
-                type: parts[1].trim(),
-                question: parts[2].trim(),
-                answer: parts[3].trim(),
+                id: parts[0].trim(), type: parts[1].trim(),
+                question: parts[2].trim(), answer: parts[3].trim(),
                 options: [parts[3].trim(), parts[4].trim(), parts[5].trim(), parts[6].trim()]
             });
         }
     });
 }
 
-// 抽取新的一组挑战（20道题）
 function restartChallenge() {
-    shuffleArray(globalDb);
-    challengePool = globalDb.slice(0, 20); // 每次精准抽20题
+    shuffle(globalDb);
+    challengePool = globalDb.slice(0, 20);
     totalInRound = 20;
     currentMode = "常规挑战";
     currentPool = challengePool;
     nextQuestion();
 }
-
-// ==================== 3. 游戏核心逻辑 ====================
 
 function nextQuestion() {
     isLocking = false;
@@ -460,23 +423,21 @@ function nextQuestion() {
 
     if (currentPool.length === 0) {
         if (currentMode === "常规挑战") {
-            alert("🎉 啪啪啪！本轮20道题全部消灭！");
+            alert("🎉 太强了！本轮20道题全对通关！可以去打卡成就页签到了哦~");
             restartChallenge();
         } else {
-            alert("✨ 赞！错题本已被全部清空，为你切回常规挑战！");
+            alert("✨ 赞！错题本消灭完毕，切回常规挑战。");
             restartChallenge();
         }
         return;
     }
 
-    // 随机抽题
     const randomIndex = Math.floor(Math.random() * currentPool.length);
     currentQuestion = currentPool[randomIndex];
 
     document.getElementById('quizType').innerText = `【${currentQuestion.type}】`;
     document.getElementById('quizQuestion').innerText = currentQuestion.question;
-
-    currentShuffledOptions = shuffleArray([...currentQuestion.options]);
+    currentShuffledOptions = shuffle([...currentQuestion.options]);
 
     const buttons = document.querySelectorAll('.option-btn');
     buttons.forEach((btn, index) => {
@@ -488,11 +449,7 @@ function nextQuestion() {
 function checkAnswer(selectedIndex) {
     if (isLocking) return;
     isLocking = true;
-
-    // 用户首次点击时激活/恢复音频上下文
-    if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
+    tryInitAudio();
 
     const selectedText = currentShuffledOptions[selectedIndex];
     const correctAnswer = currentQuestion.answer;
@@ -502,7 +459,6 @@ function checkAnswer(selectedIndex) {
         playSound('correct');
         buttons[selectedIndex].classList.add('correct');
 
-        // 从当前池移除
         if (currentMode === "常规挑战") {
             challengePool = challengePool.filter(q => q.id !== currentQuestion.id);
             currentPool = challengePool;
@@ -515,12 +471,9 @@ function checkAnswer(selectedIndex) {
         playSound('error');
         buttons[selectedIndex].classList.add('incorrect');
         buttons.forEach((btn, index) => {
-            if (currentShuffledOptions[index] === correctAnswer) {
-                btn.classList.add('correct');
-            }
+            if (currentShuffledOptions[index] === correctAnswer) btn.classList.add('correct');
         });
 
-        // 加入错题本（去重）
         if (!wrongPool.some(q => q.id === currentQuestion.id)) {
             wrongPool.push(currentQuestion);
         }
@@ -537,19 +490,17 @@ function updateStatusBar() {
     if (currentMode === "错题模式") {
         modeLabel.className = "mode-badge wrong-mode";
         switchBtn.innerText = "退出错题";
-        document.getElementById('remainLabel').innerText = `剩余错题: ${currentPool.length} 题`;
+        document.getElementById('remainLabel').innerText = `剩余: ${currentPool.length} 题`;
         progressBar.style.width = "100%";
     } else {
         modeLabel.className = "mode-badge";
         switchBtn.innerText = "错题强化";
         const solved = totalInRound - currentPool.length;
         document.getElementById('remainLabel').innerText = `进度: ${solved}/${totalInRound}`;
-        const pct = (solved / totalInRound) * 100;
-        progressBar.style.width = `${pct}%`;
+        progressBar.style.width = `${(solved / totalInRound) * 100}%`;
     }
 
     document.getElementById('wrongLabel').innerText = wrongPool.length;
-
     if (wrongPool.length > 0) {
         switchBtn.disabled = false;
         switchBtn.classList.add('active-ready');
@@ -562,21 +513,131 @@ function updateStatusBar() {
 function toggleMode() {
     if (currentMode === "常规挑战") {
         if (wrongPool.length === 0) return;
-        currentMode = "错题模式";
-        currentPool = wrongPool;
-        totalInRound = wrongPool.length;
-        nextQuestion();
+        currentMode = "错题模式"; currentPool = wrongPool; totalInRound = wrongPool.length; nextQuestion();
     } else {
-        currentMode = "常规挑战";
-        currentPool = challengePool;
-        totalInRound = challengePool.length + (20 - challengePool.length); // 维持原有大数
-        nextQuestion();
+        currentMode = "常规挑战"; currentPool = challengePool; totalInRound = 20; nextQuestion();
     }
 }
 
+// ==================== 4. 仿 App 选项卡切换 ====================
+function switchTab(tabName) {
+    tryInitAudio(); // 每次切签点击时激活音效
+    document.querySelectorAll('.content-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    if (tabName === 'quiz') {
+        document.getElementById('pageQuiz').classList.add('active');
+        document.getElementById('btnNavQuiz').classList.add('active');
+    } else if (tabName === 'search') {
+        document.getElementById('pageSearch').classList.add('active');
+        document.getElementById('btnNavSearch').classList.add('active');
+        doSearch(); // 自动跑一次空搜索，展示全部数据
+    } else if (tabName === 'rank') {
+        document.getElementById('pageRank').classList.add('active');
+        document.getElementById('btnNavRank').classList.add('active');
+        renderPunchGrid();
+    }
+}
+
+// ==================== 5. 题库字典查询系统 ====================
+function doSearch() {
+    const kw = document.getElementById('searchInp').value.toLowerCase().trim();
+    const listContainer = document.getElementById('dictList');
+    listContainer.innerHTML = '';
+
+    // 使用 Map 去重，让查询列表极度纯净
+    const uniqueMap = new Map();
+    globalDb.forEach(item => {
+        const key = `${item.type}_${item.question}_${item.answer}`;
+        if (!uniqueMap.has(key)) uniqueMap.set(key, item);
+    });
+
+    let count = 0;
+    uniqueMap.forEach(item => {
+        if (kw === "" || item.question.toLowerCase().includes(kw) || item.answer.toLowerCase().includes(kw)) {
+            if (count < 40) { // 限制最多展示前 40 条，防止卡顿
+                const div = document.createElement('div');
+                div.className = 'dict-item';
+                div.innerHTML = `<span class="dict-q"><span style="font-size:12px;color:#747d8c;font-weight:400;">${item.type}</span> ${item.question}</span> <span class="dict-a">正解: ${item.answer}</span>`;
+                listContainer.appendChild(div);
+                count++;
+            }
+        }
+    });
+    if(count === 0) {
+        listContainer.innerHTML = '<div style="text-align:center;color:#a4b0be;margin-top:20px;font-size:14px;">没有搜到匹配的元素记录数据哦~</div>';
+    }
+}
+
+// ==================== 6. 周期性持久化打卡系统 ====================
+function getTodayString() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function renderPunchGrid() {
+    const history = JSON.parse(localStorage.getItem('chem_punch_history') || '[]');
+    const streak = parseInt(localStorage.getItem('chem_punch_streak') || '0');
+    const lastDate = localStorage.getItem('chem_punch_last_date') || '';
+
+    document.getElementById('streakText').innerText = `${streak} 天`;
+
+    const today = getTodayString();
+    document.getElementById('punchBtn').disabled = (lastDate === today);
+    if (lastDate === today) document.getElementById('punchBtn').innerText = '今日已打卡';
+    else document.getElementById('punchBtn').innerText = '今日打卡';
+
+    const grid = document.getElementById('punchGrid');
+    grid.innerHTML = '';
+
+    // 生成固定 28 个格子表示周期循环进度
+    for (let i = 1; i <= 28; i++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'grid-day';
+        dayDiv.innerText = `${i}天`;
+
+        // 循环点亮打卡格
+        if (i <= streak) {
+            dayDiv.classList.add('active');
+            dayDiv.innerText = '⭐';
+        }
+        grid.appendChild(dayDiv);
+    }
+}
+
+function executePunch() {
+    tryInitAudio();
+    const today = getTodayString();
+    let streak = parseInt(localStorage.getItem('chem_punch_streak') || '0');
+    const lastDate = localStorage.getItem('chem_punch_last_date') || '';
+
+    if (lastDate === today) return;
+
+    // 检查是否为连续打卡（昨天）
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yestStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
+
+    if (lastDate === yestStr || streak === 0) {
+        streak += 1;
+        if(streak > 28) streak = 1; // 满 28 天自动新一轮周期循环
+    } else {
+        streak = 1; // 断签重置
+    }
+
+    localStorage.setItem('chem_punch_streak', streak);
+    localStorage.setItem('chem_punch_last_date', today);
+
+    alert("🎉 打卡成功！成就星海已点亮，继续坚持哦！");
+    renderPunchGrid();
+}
+
+// ==================== 7. 页面载入入口 ====================
 window.onload = () => {
     initData();
     restartChallenge();
+    // 全局任意位置初次点击时静默激活音频引擎
+    document.body.addEventListener('click', () => { tryInitAudio(); }, { once: false });
 };
 </script>
 
